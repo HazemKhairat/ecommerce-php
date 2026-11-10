@@ -51,7 +51,9 @@ class CheckoutController extends Controller
 
                 // Re-verify stock and calculate frozen prices
                 foreach ($cart->items as $cartItem) {
-                    $variant = ProductVariant::findOrFail($cartItem->product_variant_id);
+                    $variant = ProductVariant::where('id', $cartItem->product_variant_id)
+                        ->lockForUpdate()
+                        ->first();
 
                     // Check if stock is still sufficient
                     if ($cartItem->quantity > $variant->stock) {
@@ -103,7 +105,7 @@ class CheckoutController extends Controller
 
                 return $order;
             });
-            
+
             OrderPlaced::dispatch($order);
             return response()->json([
                 'message' => 'Order placed successfully.',

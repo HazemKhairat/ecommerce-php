@@ -18,7 +18,6 @@ class ProductController extends Controller
         DB::enableQueryLog();
         $startTime = microtime(true);
 
-        // استعلام خام بدون with لملاحظة مشكلة الـ N+1 كما في الخطة
         $query = Product::query()->where('status', 'published')
             ->with([
                 'category:id,name',
@@ -43,7 +42,6 @@ class ProductController extends Controller
 
         $products = $query->paginate(15);
 
-        // محاكاة تحويل البيانات واستدعاء العلاقات لكل عنصر (Lazy Loading Trigger)
         $transformed = collect($products->items())->map(function ($product) {
             return [
                 'id' => $product->id,
