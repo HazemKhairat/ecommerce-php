@@ -23,10 +23,8 @@ class ProductController extends Controller
         $sort = $request->input('sort', 'default');
         $page = $request->input('page', 1);
 
-        // بناء مفتاح فريد لكل تركيبة فلاتر ورقم صفحة
         $cacheKey = "products:catalog:cat_{$categoryId}:sort_{$sort}:page_{$page}";
 
-        // فحص الريديس: التخزين لمدة 10 دقائق (600 ثانية)
         $cachedData = Cache::remember($cacheKey, 600, function () use ($request) {
             $query = Product::query()
                 ->where('status', 'published')
